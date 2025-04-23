@@ -1,0 +1,6 @@
+@ArchiwumWatykanskie_HostAddress = http://localhost:5074
+
+GET {{ArchiwumWatykanskie_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
