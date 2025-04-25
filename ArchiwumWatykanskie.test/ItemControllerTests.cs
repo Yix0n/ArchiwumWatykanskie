@@ -52,12 +52,22 @@ public class ItemControllerTests
         var context = GetInMemoryDbContext();
         var controller = new ItemController(context);
 
+        var testItem = new Models.Item
+        {
+            Name = "Test Item",
+            Description = "Test Description",
+            PopeId = 1
+        };
+        context.Items.Add(testItem);
+        context.SaveChanges();
+
         // Act
-        var result = controller.GetItem(1);
+        var result = controller.GetItem(testItem.Id);
 
         // Assert
         var actionResult = Assert.IsType<ActionResult<itemRes_get>>(result);
         Assert.NotNull(result.Value);
+        Assert.Equal("Test Item", result.Value.Name);
     }
 
     [Fact]
@@ -67,8 +77,17 @@ public class ItemControllerTests
         var context = GetInMemoryDbContext();
         var controller = new ItemController(context);
 
+        var testItem = new Models.Item
+        {
+            Name = "Test Item",
+            Description = "Test Description",
+            PopeId = 1
+        };
+        context.Items.Add(testItem);
+        context.SaveChanges();
+
         // Act
-        var result = controller.DeleteItem(1);
+        var result = controller.DeleteItem(testItem.Id);
 
         // Assert
         var actionResult = Assert.IsType<ActionResult<bool>>(result);
