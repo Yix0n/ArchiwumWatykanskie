@@ -1,4 +1,5 @@
 using ArchiwumWatykanskie.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace ArchiwumWatykanskie;
 
@@ -10,14 +11,18 @@ public class Program
 
         builder.Services.AddControllers();
         builder.Services.AddOpenApi();
-
-        using (var context = new AppDbContext())
+        builder.Services.AddDbContext<AppDbContext>(opt =>
         {
-            context.EnsureCreated();
-        }
+            opt.UseSqlite("Data Source=app.db");
+        });
 
         var app = builder.Build();
         
+        using (var scope = app.Services.CreateScope())
+        {
+            var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            dbContext.Database.EnsureCreated();
+        }
         
         if (app.Environment.IsDevelopment())
         {

@@ -8,6 +8,15 @@ public class AppDbContext : DbContext
     public DbSet<Pope> Popes { get; set; }
     public DbSet<Item> Items { get; set; }
     
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+    {
+    }
+    
+    public AppDbContext() : base(new DbContextOptionsBuilder<AppDbContext>()
+        .UseSqlite("Data Source=app.db")
+        .Options)
+    {
+    }
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
         options.UseSqlite("Data Source=app.db");   
