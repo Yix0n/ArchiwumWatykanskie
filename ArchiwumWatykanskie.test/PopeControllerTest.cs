@@ -10,8 +10,42 @@ using Xunit;
 
 namespace ArchiwumWatykanskie.test;
 
-public class PopeControllerTests
+public class PopeControllerTests : IAsyncLifetime
 {
+    public Task InitializeAsync()
+    {
+        // Initialize the in-memory database
+        var context = GetInMemoryDbContext();
+        context.Database.EnsureCreated();
+        
+        var testPope = new Pope
+        {
+            Name = "Test Pope",
+            BirthDate = DateTime.Now.AddYears(-50),
+            DeathDate = DateTime.Now.AddYears(-10)
+        };
+        
+        var testItem = new Item
+        {
+            Name = "Test Item",
+            Description = "Test Description",
+            Pope = testPope
+        };
+        
+        context.Popes.Add(testPope);
+        context.Items.Add(testItem);
+        context.SaveChanges();
+        
+        return Task.CompletedTask;
+    }
+
+    public Task DisposeAsync()
+    {
+        GetInMemoryDbContext().Database.EnsureDeletedAsync();
+        
+        return Task.CompletedTask;
+    }
+
     private AppDbContext GetInMemoryDbContext()
     {
         var options = new DbContextOptionsBuilder<AppDbContext>()
@@ -20,7 +54,6 @@ public class PopeControllerTests
 
         var context = new AppDbContext(options);
         context.Database.OpenConnection();
-        context.EnsureCreated();
         return context;
     }
 
